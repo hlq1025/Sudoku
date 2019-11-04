@@ -1,4 +1,4 @@
-package com.example.hua.helloworld;
+package com.example.hua.Sudoku;
 
 public class Sudoku {
     public void solveSudoku(char[][] board) {

@@ -1,21 +1,12 @@
-package com.example.hua.helloworld;
+package com.example.hua.Sudoku;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.view.inputmethod.EditorInfo;
-import android.view.KeyEvent;
-import android.widget.Toast;
-import android.text.TextWatcher;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import com.example.hua.helloworld.Sudoku;
-import android.util.Log;
+import android.text.TextWatcher;
+import android.view.Gravity;
+import android.widget.EditText;
+import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements TextWatcher{
 
     private EditText editText00;
