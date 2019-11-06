@@ -1,7 +1,8 @@
 package com.example.hua.Sudoku;
 
 public class Sudoku {
-    public void solveSudoku(char[][] board) {
+    public static char[][]board;
+    public static void  solveSudoku() {
         // 三个布尔数组 表明 行, 列, 还有 3*3 的方格的数字是否被使用过
         boolean[][] rowUsed = new boolean[9][10];
         boolean[][] colUsed = new boolean[9][10];
@@ -18,10 +19,64 @@ public class Sudoku {
             }
         }
         // 递归尝试填充数组
-        recusiveSolveSudoku(board, rowUsed, colUsed, boxUsed, 0, 0);
+        recusiveSolveSudoku( rowUsed, colUsed, boxUsed, 0, 0);
     }
+    public static boolean isValidSudoku() {
+        // 记录某行，某位数字是否已经被摆放
+        boolean[][] row = new boolean[9][9];
+        // 记录某列，某位数字是否已经被摆放
+        boolean[][] col = new boolean[9][9];
+        // 记录某 3x3 宫格内，某位数字是否已经被摆放
+        boolean[][] block = new boolean[9][9];
 
-    private boolean recusiveSolveSudoku(char[][]board, boolean[][]rowUsed, boolean[][]colUsed, boolean[][][]boxUsed, int row, int col){
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] != '.') {
+                    int num = board[i][j] - '1';
+                    int blockIndex = i / 3 * 3 + j / 3;
+                    if (row[i][num] || col[j][num] || block[blockIndex][num]) {
+                        return false;
+                    } else {
+                        row[i][num] = true;
+                        col[j][num] = true;
+                        block[blockIndex][num] = true;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    public static void InitSudoku()
+    {
+
+                /*{'.','.','.','.','.','2','.','.','0'};
+                {'.','7','8','.','.','.','3','0','0'}
+                {'.','.','.','.','.','4','.','.','.'},
+                {'5','.','.','.','0','0','0','0','0'},
+                {'.','.','.','.','.','.','1','.','.'},
+                {'.','.','.','.','3','.','7','.','8'},
+                {'2','.','.','.','.','.','.','4','.'},
+                {'.','.','.','.','.','5','.','9','.'},
+                {'.','1','.','.','7','.','.','.','.'}*/
+                board=new char[9][9];
+                for(int row=0;row<9;row++)
+                    for(int col=0;col<9;col++)
+                    {
+                        board[row][col]='.';
+                    }
+
+        solveSudoku();
+        for(int row=0;row<9;row++)
+            for(int col=0;col<9;col++)
+            {
+                double p=Math.random();
+                if(p<0.5)
+                {
+                    board[row][col]='.';
+                }
+            }
+    }
+    private static boolean recusiveSolveSudoku( boolean[][]rowUsed, boolean[][]colUsed, boolean[][][]boxUsed, int row, int col){
         // 边界校验, 如果已经填充完成, 返回true, 表示一切结束
         if(col == board[0].length){
             col = 0;
@@ -41,7 +96,7 @@ public class Sudoku {
                     boxUsed[row/3][col/3][num] = true;
 
                     board[row][col] = (char)('0' + num);
-                    if(recusiveSolveSudoku(board, rowUsed, colUsed, boxUsed, row, col + 1)){
+                    if(recusiveSolveSudoku( rowUsed, colUsed, boxUsed, row, col + 1)){
                         return true;
                     }
                     board[row][col] = '.';
@@ -52,7 +107,7 @@ public class Sudoku {
                 }
             }
         } else {
-            return recusiveSolveSudoku(board, rowUsed, colUsed, boxUsed, row, col + 1);
+            return recusiveSolveSudoku( rowUsed, colUsed, boxUsed, row, col + 1);
         }
         return false;
     }
