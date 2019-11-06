@@ -40,8 +40,9 @@ public class MyDialog extends Dialog {
             public void onClick(View v) {
 
                 // 响应事件
-                dismiss();
-                Sudoku.InitSudoku();
+                cancel();
+
+
 
 
             }});

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.content.DialogInterface;
 public class MainActivity extends AppCompatActivity {
 
     private Button[][] edittexts;
@@ -41,12 +42,23 @@ public class MainActivity extends AppCompatActivity {
         dialog=new MyDialog(MainActivity.this);
 
 
-        /*dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                //MainActivity.this.finish();
-                //Sudoku.InitSudoku();
-            }});*/
+                score_tv.setText("0");
+                Sudoku.InitSudoku();
+                for(int row=0;row<9;row++)
+                    for(int col=0;col<9;col++)
+                    {
+                        char c=Sudoku.board[row][col];
+                        if(c>'0'&&c<='9') {
+                            edittexts[row][col].setText( String.valueOf(c));
+
+                        }
+                        else
+                            edittexts[row][col].setText("");
+                    }
+            }});
 
 
         for(int row=0;row<9;row++)
