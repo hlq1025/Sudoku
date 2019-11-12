@@ -5,67 +5,255 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    　　　　　
 
     <LinearLayout
-        android:id="@+id/linearlayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="200dp"
+
+        android:layout_marginBottom="400dp"
+
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <TableLayout
+            android:layout_width="360dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:text="     　分数"
-            android:textSize="30sp"
-            />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            >
+            <TableRow
+                android:layout_width="160dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/Sudoku"
+                    android:layout_width="160dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/sudoku"
+
+                    />
+            </TableRow>
+            <TableRow
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/Sudoku1"
+                    android:layout_width="180dp"
+                    android:layout_height="60dp"
+                    android:gravity="center_horizontal"
+                    android:text="Sudoku"
+                    android:background="@drawable/sudoku"
+                    android:textColor="@color/white"
+                    android:textSize="40sp" />
+            </TableRow>
+            <TableRow
+                android:layout_width="180dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/Sudoku2"
+                    android:layout_width="180dp"
+                    android:layout_height="30dp"
+                    android:gravity="center_horizontal"
+
+                    android:background="@drawable/sudoku"
+                    />
+            </TableRow>
+
+
+
+        </TableLayout>
+
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
             android:layout_weight="1"
-            android:layout_gravity="bottom"
-            android:text="    　记录"
-            android:textSize="30sp"
-            />
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="25dp"
+
+            >
+
+
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sudoku"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                >
+
+
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/sudoku"
+                    android:text="用时"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/record_text"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:background="@drawable/sudoku"
+                    android:textColor="@color/white"
+                    android:text="记录"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/sudoku"
+                android:layout_weight="1">
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                android:background="@drawable/sudoku"
+                android:textColor="@color/white"
+                android:padding="0dp"
+                android:textSize="20sp" />
+
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                android:background="@drawable/sudoku"
+                android:textColor="@color/white"
+                android:text="00:00"
+                android:textSize="20sp" />
+        </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_height="40dp"
+
+                android:layout_weight="1"
+
+                >
+
+                <Button
+                    android:id="@+id/menu_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/sudoku"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="菜单" />
+
+                <TextView
+                    android:id="@+id/hardlevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:background="@drawable/sudoku"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="简单" />
+            </TableRow>
+
+        </TableLayout>
     </LinearLayout>
-
+　　<!--
     <LinearLayout
-        android:id="@+id/linearlayout1"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="60dp"
-        >
+            android:id="@+id/linearlayout1"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="0dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="用时"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="记录"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearlayout2"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="15dp"
+                android:textSize="30dp" />
 
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="0"
-            android:gravity="center"
-            android:textSize="30sp" />
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="00:00"
+                android:textSize="30sp" />
+        </LinearLayout>
+        -->
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="0"
-            android:gravity="center"
-            android:textSize="30sp"/>
-    </LinearLayout>
 
     <TableLayout
         android:id="@+id/tablelayout"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:layout_marginTop="120dp">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginRight="10dp">
 
     </TableLayout>
 
@@ -73,12 +261,54 @@
         android:id="@+id/tablelayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="540dp"
-        android:layout_marginLeft="105dp"
-        android:layout_marginRight="60dp"
-        >
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="570dp"
+        android:layout_marginRight="10dp">
 
 
     </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="640dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginLeft="60dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/clear_button"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/sudoku"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="清除" />
+
+        <Button
+            android:id="@+id/pause_button"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/sudoku"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="暂停" />
+
+        <Button
+            android:id="@+id/hint_button"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:background="@drawable/sudoku"
+            android:textColor="@color/white"
+            android:text="提示" />
+
+    </LinearLayout>
+
 
 </FrameLayout>
