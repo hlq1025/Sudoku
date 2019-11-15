@@ -80,7 +80,7 @@ public class Sudoku {
         }
         return true;
     }
-    public static void InitSudoku()
+    public static void InitSudoku(double difficulty_index)
     {
 
                 /*{'.','.','.','.','.','2','.','.','0'};
@@ -120,7 +120,7 @@ public class Sudoku {
             for(int col=0;col<9;col++)
             {
                 double p=Math.random();
-                if(p<0.5)
+                if(p<difficulty_index)
                 {
                     board[row][col]='.';
                 }

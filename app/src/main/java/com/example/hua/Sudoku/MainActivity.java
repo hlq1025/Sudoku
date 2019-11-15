@@ -14,9 +14,13 @@ import android.widget.Chronometer;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
+import android.database.sqlite.SQLiteDatabase;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.util.Log;
 public class MainActivity extends AppCompatActivity {
 
+    private RecordTable Rt;
     private Button[][] edittexts;
     private Button[]  number_buttons;
     private Button clear_button;
@@ -27,13 +31,15 @@ public class MainActivity extends AppCompatActivity {
     private Chronometer chronometer;
     private Intent intent;
     private TextView sudoku;
+    private TextView time_record;
+    private TextView hard_level;
     private int num;
     private int last_pressed_row;
     private int last_pressed_col;
     private int pressed_row;
     private int pressed_col;
     private long recordingTime = 0;// 记录下来的总时间
-
+    private double difficulty_index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +48,64 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void init() {
-        getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor)); //#fafafa
+        getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
+        Rt=new RecordTable(this);
+        SQLiteDatabase writableDatabase = Rt.getWritableDatabase();
+        ContentValues values = new ContentValues();
+/*
+        values.put("hard_level","简单");
+        values.put("time","00:01");
+        writableDatabase.insert("record",null,values);
+        values.clear();
 
+        values.put("hard_level","中等");
+        values.put("time","00:02");
+        writableDatabase.insert("record",null,values);
+        values.clear();
+
+        values.put("hard_level","困难");
+        values.put("time","00:03");
+        writableDatabase.insert("record",null,values);
+        values.clear();
+        */
+        /*
+        values.put("hard_level","简单");
+        values.put("time","??");
+        writableDatabase.update("record",values,"hard_level=?",new String[]{"简单"});
+        values.clear();
+
+        values.put("hard_level","中等");
+        values.put("time","??");
+        writableDatabase.update("record",values,"hard_level=?",new String[]{"中等"});
+        values.clear();
+
+        values.put("hard_level","困难");
+        values.put("time","??");
+        writableDatabase.update("record",values,"hard_level=?",new String[]{"困难"});
+        values.clear();
+        */
+        Object obj=getIntent().getExtras().get("difficulty_index");
+        difficulty_index= Double.parseDouble(obj.toString());
+        time_record=findViewById(R.id.time_record);
+
+        hard_level=findViewById(R.id.hard_level);
+        obj=getIntent().getExtras().get("hard_level");
+        hard_level.setText(obj.toString());
+        Cursor cursor = writableDatabase.query("record",null,null,null,null,null,null);
+        if(cursor.moveToFirst()){
+            do{
+                String s2 = cursor.getString(cursor.getColumnIndex("hard_level"));
+                String s3=obj.toString();
+                if(s2.equals(s3))
+               {time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
+               break;
+               }
+
+
+            }while (cursor.moveToNext());
+        }else {
+            Log.d("----------", "onClick: 数据库为空");
+        }
         TableLayout tablelayout=(TableLayout) findViewById(R.id.tablelayout);
         tablelayout.setGravity(100);
         tablelayout.setStretchAllColumns(true);
@@ -56,9 +118,10 @@ public class MainActivity extends AppCompatActivity {
         clear_button=findViewById(R.id.clear_button);
         pause_button=findViewById(R.id.pause_button);
         hint_button=findViewById(R.id.hint_button);
+        menu_button=findViewById(R.id.menu_button);
         chronometer=   (Chronometer) findViewById(R.id.chronometer);
         chronometer.start();
-        Sudoku.InitSudoku();
+        Sudoku.InitSudoku(difficulty_index);
         for(int row=0;row<9;row++)
         {
             TableRow tableRow=new TableRow(MainActivity.this);
@@ -170,9 +233,49 @@ public class MainActivity extends AppCompatActivity {
                           if (!Sudoku.CanGetSolution()) {
                               dialog.show();
                           }
+                          boolean IsFull=true;
+                          for(int i=0;i<9;i++)
+                              for(int j=0;j<9;j++)
+                              {
+                                  if(edittexts[i][j].getText().length()==0)
+                                      IsFull=false;
+                              }
+                              if(IsFull)
+                              {
+                                  SQLiteDatabase writableDatabase = Rt.getWritableDatabase();
+                                  //修改
+                                  ContentValues cv=new ContentValues();
+                                  cv.put("time", chronometer.getText().toString());
+                                  Cursor cursor = writableDatabase.query("record",null,null,null,null,null,null);
+                                  if(cursor.moveToFirst()){
+                                      do{
+                                          String s2 = cursor.getString(cursor.getColumnIndex("hard_level"));
+                                          String s3=hard_level.getText().toString();
+                                          Log.d("----------", cursor.getString(cursor.getColumnIndex("hard_level")));
+                                          Log.d("----------", cursor.getString(cursor.getColumnIndex("time")));
+                                          if(s2.equals(s3))
+                                          {   String s4=cursor.getString(cursor.getColumnIndex("time"));
+                                              if(s4.equals("??")||s4.compareTo(chronometer.getText().toString())>0)
+                                              {
+                                                  writableDatabase.update("record",cv,"hard_level=?",new String[]{hard_level.getText().toString()});
+                                              }
+                                              break;
+                                          }
+                                          }while (cursor.moveToNext());
+                                  }
+                                  else
+                                      {
+                                      Log.d("----------", "onClick: 数据库为空");
+                                  }
+                                  //关闭连接
+                                  writableDatabase.close();
+                                  Intent intent = new Intent(MainActivity.this , Success.class);
+                                  intent.putExtra("this_hard_level",hard_level.getText().toString());
+                                  intent.putExtra("this_record_time",chronometer.getText().toString());
+                                  startActivity(intent);
+                              }
                       }
-
-                  }
+                      }
               });
           }
           tablelayout2.addView(tableRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
@@ -187,7 +290,7 @@ private void SetListeners()
         @Override
         public void onCancel(DialogInterface dialog) {
 
-            Sudoku.InitSudoku();
+            Sudoku.InitSudoku(difficulty_index);
             last_pressed_row=-1;
             last_pressed_col=-1;
             pressed_row=-1;
@@ -285,9 +388,63 @@ private void SetListeners()
                                            edittexts[pressed_row][pressed_col].setText(String.valueOf(ans));
                                            Sudoku.board[pressed_row][pressed_col]=(char)(48+ans);
                                            edittexts[pressed_row][pressed_col].setEnabled(false);
+                                              boolean IsFull=true;
+                                              for(int i=0;i<9;i++)
+                                                  for(int j=0;j<9;j++)
+                                                  {
+                                                      if(edittexts[i][j].getText().length()==0)
+                                                          IsFull=false;
+                                                  }
+                                              if(IsFull)
+                                              {
+                                                  SQLiteDatabase writableDatabase = Rt.getWritableDatabase();
+                                                  //修改
+                                                  ContentValues cv=new ContentValues();
+                                                  cv.put("time", chronometer.getText().toString());
+                                                  Cursor cursor = writableDatabase.query("record",null,null,null,null,null,null);
+                                                  if(cursor.moveToFirst()){
+                                                      do{
+                                                          String s2 = cursor.getString(cursor.getColumnIndex("hard_level"));
+                                                          String s3=hard_level.getText().toString();
+                                                          Log.d("----------", cursor.getString(cursor.getColumnIndex("hard_level")));
+                                                          Log.d("----------", cursor.getString(cursor.getColumnIndex("time")));
+                                                          if(s2.equals(s3))
+                                                          {   String s4=cursor.getString(cursor.getColumnIndex("time"));
+                                                              if(s4.equals("??")||s4.compareTo(chronometer.getText().toString())>0)
+                                                              {
+                                                                  writableDatabase.update("record",cv,"hard_level=?",new String[]{hard_level.getText().toString()});
+                                                              }
+                                                              break;
+                                                          }
+                                                      }while (cursor.moveToNext());
+                                                  }
+                                                  else
+                                                  {
+                                                      Log.d("----------", "onClick: 数据库为空");
+                                                  }
+                                                  //关闭连接
+                                                  writableDatabase.close();
+                                                  Intent intent = new Intent(MainActivity.this , Success.class);
+                                                  intent.putExtra("this_hard_level",hard_level.getText().toString());
+                                                  intent.putExtra("this_record_time",chronometer.getText().toString());
+                                                  startActivity(intent);
                                           }
                                        }
-                                   }
+                                   }}
+    );
+
+    menu_button.setOnClickListener(new View.OnClickListener()
+    {
+        @Override
+        public void onClick(View v)
+        {
+            Intent intent = new Intent(MainActivity.this , Menu.class);
+
+            startActivity(intent);//然后调用Activity类提供的startAcitivity()方法，用于启动一个活动
+
+
+        }
+    }
     );
 }
 

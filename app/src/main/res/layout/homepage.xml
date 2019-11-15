@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    >
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -15,40 +18,59 @@
             android:layout_marginRight="80dp"
             android:orientation="vertical">
 
-            <Button
+            <TextView
                 android:id="@+id/button"
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SUDOKU" />
+                android:text="Sudoku"
+                android:textSize="50sp"
+                android:background="@color/white"
+                style="?android:attr/borderlessButtonStyle"
+                android:textColor="@color/theme_color"/>
 
             <Button
                 android:id="@+id/easy_mode"
                 android:layout_marginTop="60dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/sudoku"
+                android:textSize="30sp"
+                android:textColor="@color/white"
                 android:text="简单模式" />
 
             <Button
                 android:id="@+id/middle_mode"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/sudoku"
+                android:textSize="30sp"
+                android:textColor="@color/white"
                 android:text="中等模式" />
 
             <Button
                 android:id="@+id/hard_mode"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/sudoku"
+                android:textSize="30sp"
+                android:textColor="@color/white"
                 android:text="困难模式" />
 
-            <Button
-                android:id="@+id/rule_declare"
-                android:layout_marginTop="20dp"
+
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_marginTop="190dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="规则说明" />
+                android:text="游戏规则:
+                　　　　　　　同一行不能有相同的数字,
+                　　　　　　　 同一列不能有相同的数字,
+                              同一个小宫格不能有相同的数字." />
+
         </LinearLayout>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>
