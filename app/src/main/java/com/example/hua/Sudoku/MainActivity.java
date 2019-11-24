@@ -1,11 +1,21 @@
 package com.example.hua.Sudoku;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.ComponentCallbacks;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +24,6 @@ import android.widget.Chronometer;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.database.sqlite.SQLiteDatabase;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.util.Log;
 public class MainActivity extends AppCompatActivity {
 
     private RecordTable Rt;
@@ -43,8 +49,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setCustomDensity(this,getApplication());
         setContentView(R.layout.activity_main);
         init();
+
+
 
     }
     private void init() {
@@ -132,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
                 edittexts[row][col].setEnabled(true);
                 edittexts[row][col].setGravity(Gravity.CENTER);
-                edittexts[row][col].setTextSize(18);
+                edittexts[row][col].setTextSize(15);
                 edittexts[row][col].setTextColor(Color.rgb(28,159,93));
                 SetButtonStyle(edittexts,row,col);
 
@@ -597,7 +606,60 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
         }
     }
 
+    /**
+     * 今日头条适配方案  修改设备密度
+     * 支持以宽或者高一个维度去适配，保持该维度上和设计图一致
+     * 当前设备总宽度(px) / 设计图总宽度(dp) = density
+     * density: 1dp 占当前设备的多少像素
+     * 在BaseActivity的onCreate()中引用即可
+     * @param activity
+     * @param application
+     */
 
+    private static float sNoncompatDensity;
+    private static float sNoncompatScaledDensity;
+
+    public static void setCustomDensity(@NonNull Activity activity, @NonNull final Application application) {
+
+        final DisplayMetrics appDisplayMetrics = application.getResources().getDisplayMetrics();
+
+        if (sNoncompatDensity == 0) {
+            // 系统显示器的逻辑密度
+            sNoncompatDensity = appDisplayMetrics.density;
+            // 字体的缩放系数，与density相同
+            sNoncompatScaledDensity = appDisplayMetrics.scaledDensity;
+            // 监听字体切换，防止系统切换后不起作用
+            application.registerComponentCallbacks(new ComponentCallbacks() {
+                @Override
+                public void onConfigurationChanged(Configuration newConfig) {
+                    if (newConfig != null && newConfig.fontScale > 0) {
+                        sNoncompatScaledDensity = application.getResources().getDisplayMetrics().scaledDensity;
+                    }
+                }
+
+                @Override
+                public void onLowMemory() {
+
+                }
+            });
+        }
+
+        // 目标密度 屏幕宽度(px) / 设计图的宽度(dp), 这里是以小米6X为例
+        float targetDensity = appDisplayMetrics.heightPixels/711;
+        // 目标缩放密度
+        float targetScaleDensity = targetDensity * (sNoncompatScaledDensity / sNoncompatDensity);
+        // 目标DPI
+        int targetDensityDpi = (int) (160 * targetDensity);
+
+        appDisplayMetrics.density = targetDensity;
+        appDisplayMetrics.scaledDensity = targetScaleDensity;
+        appDisplayMetrics.densityDpi = targetDensityDpi;
+
+        final DisplayMetrics activityDisplayMetrics = activity.getResources().getDisplayMetrics();
+        activityDisplayMetrics.density = targetDensity;
+        activityDisplayMetrics.scaledDensity = targetScaleDensity;
+        activityDisplayMetrics.densityDpi = targetDensityDpi;
+    }
 
 
 }
