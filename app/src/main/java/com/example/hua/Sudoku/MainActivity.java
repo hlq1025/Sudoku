@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.ContentValues;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button pause_button;
     private Button hint_button;
     private Button menu_button;
-    private MyDialog  dialog;
+
     private Chronometer chronometer;
     private Intent intent;
     private TextView sudoku;
@@ -46,38 +47,67 @@ public class MainActivity extends AppCompatActivity {
     private int pressed_col;
     private long recordingTime = 0;// 记录下来的总时间
     private double difficulty_index;
+    private Sudoku suk;
+    public static MainActivity instance = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setCustomDensity(this,getApplication());
         setContentView(R.layout.activity_main);
+        instance=this;
         init();
 
 
 
     }
-    private void init() {
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        long base_time= SystemClock.elapsedRealtime() - chronometer.getBase();
+     String this_hard_level=hard_level.getText().toString();
+     String []nums=new String[81];
+     boolean full=true;
+     boolean flag=true;
+     for(int i=0;i<9;i++)
+         for(int j=0;j<9;j++)
+         {
+            String temp=edittexts[i][j].getText().toString();
+           if(temp.length()!=0)  nums[i*9+j]= temp;
+           else nums[i*9+j]=".";
+            if(temp.equals("")) full=false;
+         }
+
+
+        flag= suk.CanGetSolution() &&(!full);
+     SaveInformation(base_time,this_hard_level,nums,flag);
+
+    }
+    private void init()
+    {
         getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
         Rt=new RecordTable(this);
+        suk=new Sudoku();
         SQLiteDatabase writableDatabase = Rt.getWritableDatabase();
+
         ContentValues values = new ContentValues();
-/*
+
         values.put("hard_level","简单");
-        values.put("time","00:01");
+        values.put("time","无");
         writableDatabase.insert("record",null,values);
         values.clear();
 
         values.put("hard_level","中等");
-        values.put("time","00:02");
+        values.put("time","无");
         writableDatabase.insert("record",null,values);
         values.clear();
 
         values.put("hard_level","困难");
-        values.put("time","00:03");
+        values.put("time","无");
         writableDatabase.insert("record",null,values);
         values.clear();
-        */
-        /*
+
+/*
         values.put("hard_level","简单");
         values.put("time","??");
         writableDatabase.update("record",values,"hard_level=?",new String[]{"简单"});
@@ -92,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         values.put("time","??");
         writableDatabase.update("record",values,"hard_level=?",new String[]{"困难"});
         values.clear();
-        */
+*/
         Object obj=getIntent().getExtras().get("difficulty_index");
         difficulty_index= Double.parseDouble(obj.toString());
         time_record=findViewById(R.id.time_record);
@@ -123,14 +153,14 @@ public class MainActivity extends AppCompatActivity {
         pressed_row=-1;
         pressed_col=-1;
         edittexts=new Button[9][9];
-        dialog=new MyDialog(MainActivity.this);
+
         clear_button=findViewById(R.id.clear_button);
         pause_button=findViewById(R.id.pause_button);
         hint_button=findViewById(R.id.hint_button);
         menu_button=findViewById(R.id.menu_button);
         chronometer=   (Chronometer) findViewById(R.id.chronometer);
         chronometer.start();
-        Sudoku.InitSudoku(difficulty_index);
+
         for(int row=0;row<9;row++)
         {
             TableRow tableRow=new TableRow(MainActivity.this);
@@ -138,19 +168,11 @@ public class MainActivity extends AppCompatActivity {
             {
                 edittexts[row][col]=new Button(MainActivity.this);
                 //edittexts[row][col].setLayoutParams();
-
                 edittexts[row][col].setEnabled(true);
                 edittexts[row][col].setGravity(Gravity.CENTER);
                 edittexts[row][col].setTextSize(15);
                 edittexts[row][col].setTextColor(Color.rgb(28,159,93));
                 SetButtonStyle(edittexts,row,col);
-
-
-                char c=Sudoku.board[row][col];
-                if(c>'0'&&c<='9') {
-                    edittexts[row][col].setText( String.valueOf(c));
-                    edittexts[row][col].setEnabled(false);
-                }
                 final Button b=edittexts[row][col];
                 final int row_t=row;
                 final int col_t=col;
@@ -176,14 +198,6 @@ public class MainActivity extends AppCompatActivity {
                             if(edittexts[last_pressed_row][last_pressed_col].getText().length()==0)
                                 edittexts[last_pressed_row][last_pressed_col].setEnabled(true);
                         }
-
-
-
-
-
-
-
-
 
                         //set button style for the pressed button , the same column buttons ,the same row buttons and the same region buttons
                         for(int i=0;i<9;i++)
@@ -213,6 +227,43 @@ public class MainActivity extends AppCompatActivity {
             }
          tablelayout.addView(tableRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         }
+        String []ans=LoadInformation(hard_level.getText().toString());
+        if(ans[0].equals("true"))
+        {
+           Object obj1=getIntent().getExtras().get("load_last_game");
+           String s=obj1.toString();
+if (obj1!=null&&Integer.parseInt(s)==1)
+
+{  chronometer.setBase(SystemClock.elapsedRealtime() - Long.parseLong(ans[1]));// 跳过已经记录了的时间，起到继续计时的作用
+            chronometer.start();
+            String regularEx = "#";
+            String[] str = null;
+
+            str = ans[2].split(regularEx);
+
+            for(int row=0;row<9;row++)
+            {
+                for(int col=0;col<9;col++)
+                {
+                   if (!str[row*9+col].equals(".")) edittexts[row][col].setText(str[row*9+col]);
+                   else edittexts[row][col].setText("");
+
+                 suk.board[row][col]=str[row*9+col].charAt(0);
+
+                }
+            }
+
+
+        }
+
+        else
+{
+    ClearInformation();
+    SetNumsOfGrids();
+}
+        }
+        else
+            SetNumsOfGrids();
         TableLayout tablelayout2=(TableLayout) findViewById(R.id.tablelayout2);
         number_buttons=new Button[9];
 
@@ -238,9 +289,12 @@ public class MainActivity extends AppCompatActivity {
                       num=Integer.parseInt(b1.getText().toString());
                       if(pressed_row!=-1&&pressed_col!=-1) {
                           edittexts[pressed_row][pressed_col].setText(String.valueOf(num));
-                          Sudoku.board[pressed_row][pressed_col] = (char) (48 + num);
-                          if (!Sudoku.CanGetSolution()) {
-                              dialog.show();
+                          suk.board[pressed_row][pressed_col] = (char) (48 + num);
+                          if (!suk.CanGetSolution()) {
+                              Intent intent = new Intent(MainActivity.this , Fail.class);
+                              intent.putExtra("this_hard_level",hard_level.getText().toString());
+                              intent.putExtra("this_record_time",chronometer.getText().toString());
+                              startActivity(intent);
                           }
                           boolean IsFull=true;
                           for(int i=0;i<9;i++)
@@ -295,33 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
 private void SetListeners()
 {
-    dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-        @Override
-        public void onCancel(DialogInterface dialog) {
 
-            Sudoku.InitSudoku(difficulty_index);
-            last_pressed_row=-1;
-            last_pressed_col=-1;
-            pressed_row=-1;
-            pressed_col=-1;
-            for(int row=0;row<9;row++)
-                for(int col=0;col<9;col++)
-                {
-                    char c=Sudoku.board[row][col];
-                    SetButtonStyle(edittexts,row,col);
-                    if(c>'0'&&c<='9') {
-                        edittexts[row][col].setText( String.valueOf(c));
-                        edittexts[row][col].setEnabled(false);
-
-                    }
-                    else
-                    {edittexts[row][col].setText("");
-                        edittexts[row][col].setEnabled(true);
-                    }
-                }
-            chronometer.setBase(SystemClock.elapsedRealtime());
-            chronometer.start();
-        }});
     clear_button.setOnClickListener(new View.OnClickListener()
                                     {
                                         @Override
@@ -393,9 +421,9 @@ private void SetListeners()
                                        public void onClick(View v)
                                        {
                                           if(pressed_row!=-1&&pressed_col!=-1)
-                                          {int ans=Sudoku.GetHint(pressed_row,pressed_col);
+                                          {int ans=suk.GetHint(pressed_row,pressed_col);
                                            edittexts[pressed_row][pressed_col].setText(String.valueOf(ans));
-                                           Sudoku.board[pressed_row][pressed_col]=(char)(48+ans);
+                                           suk.board[pressed_row][pressed_col]=(char)(48+ans);
                                            edittexts[pressed_row][pressed_col].setEnabled(false);
                                               boolean IsFull=true;
                                               for(int i=0;i<9;i++)
@@ -419,7 +447,7 @@ private void SetListeners()
                                                           Log.d("----------", cursor.getString(cursor.getColumnIndex("time")));
                                                           if(s2.equals(s3))
                                                           {   String s4=cursor.getString(cursor.getColumnIndex("time"));
-                                                              if(s4.equals("??")||s4.compareTo(chronometer.getText().toString())>0)
+                                                              if(s4.equals("无")||s4.compareTo(chronometer.getText().toString())>0)
                                                               {
                                                                   writableDatabase.update("record",cv,"hard_level=?",new String[]{hard_level.getText().toString()});
                                                               }
@@ -456,7 +484,24 @@ private void SetListeners()
     }
     );
 }
+private void SetNumsOfGrids()
+{
+    suk.InitSudoku(difficulty_index);
+    for(int row=0;row<9;row++)
+    {
 
+        for(int col=0;col<9;col++)
+        {
+            char c=suk.board[row][col];
+            if(c>'0'&&c<='9') {
+                edittexts[row][col].setText( String.valueOf(c));
+                edittexts[row][col].setEnabled(false);
+            }
+
+        }
+
+    }
+}
 
 private void SetButtonStyle(Button[][] buttons,int row,int col)
 {
@@ -660,8 +705,59 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
         activityDisplayMetrics.scaledDensity = targetScaleDensity;
         activityDisplayMetrics.densityDpi = targetDensityDpi;
     }
+    public void SaveInformation(long base_time, String hard_level, String[] numbers, boolean flag) {
+
+       SharedPreferences sharedPreferences = getSharedPreferences(hard_level, Context.MODE_PRIVATE);
+        //步骤2： 实例化SharedPreferences.Editor对象
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //步骤3：将获取过来的值放入文件
+        editor.putBoolean("可继续", flag);
+        editor.putLong("用时", base_time);
 
 
+        String regularEx = "#";
+        String str = "";
+
+        if (numbers != null && numbers.length > 0) {
+            for (String value : numbers) {
+                str += value;
+                str += regularEx;
+            }
+
+            editor.putString("数字表", str);
+        }
+        editor.commit();
+    }
+
+    public String[] LoadInformation(String hard_level) {
+        String ans[] = new String[3];
+
+
+        SharedPreferences sharedPreferences =  getSharedPreferences(hard_level, 0);
+
+        boolean CanCon = sharedPreferences.getBoolean("可继续", false);
+
+        if (CanCon) ans[0] = "true";
+
+        else ans[0] = "false";
+
+        ans[1] =String.valueOf(sharedPreferences.getLong("用时", 0));
+
+
+
+        ans[2] = sharedPreferences.getString("数字表", "");
+
+        return ans;
+
+    }
+public void ClearInformation()
+{
+    SharedPreferences sharedPreferences = getSharedPreferences(hard_level.getText().toString(), Context.MODE_PRIVATE);
+    //步骤2： 实例化SharedPreferences.Editor对象
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+   editor.clear();
+    editor.commit();
+}
 }
 
 

@@ -2,9 +2,14 @@ package com.example.hua.Sudoku;
 import java.util.HashSet;
 import java.util.Set;
 public class Sudoku {
-    public static char[][]board;
-    public static char[][] test_board;
-    public static boolean  solveSudoku(char[][] board) {
+    public  char[][]board;
+    public  char[][] test_board;
+public Sudoku()
+{
+    board=new char[9][9];
+    test_board=new char[9][9];
+}
+    public  boolean  solveSudoku(char[][] board) {
         // 三个布尔数组 表明 行, 列, 还有 3*3 的方格的数字是否被使用过
         boolean[][] rowUsed = new boolean[9][10];
         boolean[][] colUsed = new boolean[9][10];
@@ -23,7 +28,7 @@ public class Sudoku {
         // 递归尝试填充数组
        return recusiveSolveSudoku( board,rowUsed, colUsed, boxUsed, 0, 0);
     }
-    public static boolean CanGetSolution()
+    public  boolean CanGetSolution()
     {
         for(int row=0;row<9;row++)
             for(int col=0;col<9;col++)
@@ -35,7 +40,7 @@ public class Sudoku {
 
        return  isValidSudoku(test_board)&&solveSudoku(test_board);
     }
-    public static int GetHint(int row,int col)
+    public  int GetHint(int row,int col)
     {
         int ans=1;
 
@@ -55,7 +60,7 @@ public class Sudoku {
             }
             return ans;
     }
-    public static boolean isValidSudoku(char[][] board) {
+    public boolean isValidSudoku(char[][] board) {
         // 记录某行，某位数字是否已经被摆放
         boolean[][] row = new boolean[9][9];
         // 记录某列，某位数字是否已经被摆放
@@ -80,7 +85,7 @@ public class Sudoku {
         }
         return true;
     }
-    public static void InitSudoku(double difficulty_index)
+    public  void InitSudoku(double difficulty_index)
     {
 
                 /*{'.','.','.','.','.','2','.','.','0'};
@@ -92,8 +97,7 @@ public class Sudoku {
                 {'2','.','.','.','.','.','.','4','.'},
                 {'.','.','.','.','.','5','.','9','.'},
                 {'.','1','.','.','7','.','.','.','.'}*/
-                board=new char[9][9];
-                test_board=new char[9][9];
+
                 Set<Integer> s=new HashSet<Integer>();
                 for(int col=0;col<9;col++) {
                     Integer random_number = 9;
@@ -128,7 +132,7 @@ public class Sudoku {
             return ;
     }
 
-    private static boolean recusiveSolveSudoku( char[][] board, boolean[][]rowUsed, boolean[][]colUsed, boolean[][][]boxUsed, int row, int col){
+    private  boolean recusiveSolveSudoku( char[][] board, boolean[][]rowUsed, boolean[][]colUsed, boolean[][][]boxUsed, int row, int col){
         // 边界校验, 如果已经填充完成, 返回true, 表示一切结束
 
         if(col == board[0].length){

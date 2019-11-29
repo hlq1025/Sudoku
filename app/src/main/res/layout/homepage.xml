@@ -64,7 +64,7 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
-          android:layout_height="100dp"
+            android:layout_height="100dp"
             android:layout_marginLeft="80dp"
             android:layout_marginBottom="10dp"
             android:layout_marginRight="80dp"
@@ -72,10 +72,9 @@
             android:orientation="vertical">
         <TextView
             android:id="@+id/textView6"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-android:gravity="bottom"
+            android:gravity="bottom"
             android:textSize="12sp"
             android:text="游戏规则:\n同一行不能有相同的数字,\n同一列不能有相同的数字,\n同一个小宫格不能有相同的数字." />
     </LinearLayout>

@@ -65,7 +65,7 @@ public class Menu extends AppCompatActivity {
           public void onClick(View v)
           {
               Intent intent = new Intent(Menu.this , Homepage.class);
-
+              MainActivity.instance.finish();
               startActivity(intent);//然后调用Activity类提供的startAcitivity()方法，用于启动一个活动
           }
       });

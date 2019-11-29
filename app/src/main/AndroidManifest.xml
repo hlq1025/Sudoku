@@ -15,6 +15,9 @@
         <activity android:name=".Success">
 
         </activity>
+        <activity android:name=".Fail">
+
+        </activity>
 <activity android:name=".Homepage">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
