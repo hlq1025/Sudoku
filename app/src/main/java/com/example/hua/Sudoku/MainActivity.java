@@ -172,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
                 edittexts[row][col].setGravity(Gravity.CENTER);
                 edittexts[row][col].setTextSize(15);
                 edittexts[row][col].setTextColor(Color.rgb(28,159,93));
+
+
                 SetButtonStyle(edittexts,row,col);
                 final Button b=edittexts[row][col];
                 final int row_t=row;
@@ -221,9 +223,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
+                int width= (int) (getApplication().getResources().getDisplayMetrics().density*40);
 
+                int height=width;
 
-                tableRow.addView(edittexts[row][col],new TableRow.LayoutParams(110,110));
+             tableRow.addView(edittexts[row][col],new TableRow.LayoutParams(width,height));
             }
          tablelayout.addView(tableRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         }
