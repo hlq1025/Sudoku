@@ -46,7 +46,7 @@ public class Homepage extends AppCompatActivity {
                                  public void onClick(View v)
                                  {
 
-                                     difficulty_index=0.1;
+                                     difficulty_index=0.3;
                                      intent.putExtra("difficulty_index",difficulty_index);
                                      intent.putExtra("hard_level","简单");
 

@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
+                //
                 int width= (int) (getApplication().getResources().getDisplayMetrics().density*40);
 
                 int height=width;
@@ -236,9 +237,9 @@ public class MainActivity extends AppCompatActivity {
         {
            Object obj1=getIntent().getExtras().get("load_last_game");
            String s=obj1.toString();
-if (obj1!=null&&Integer.parseInt(s)==1)
+           if (obj1!=null&&Integer.parseInt(s)==1)
 
-{  chronometer.setBase(SystemClock.elapsedRealtime() - Long.parseLong(ans[1]));// 跳过已经记录了的时间，起到继续计时的作用
+          {  chronometer.setBase(SystemClock.elapsedRealtime() - Long.parseLong(ans[1]));// 跳过已经记录了的时间，起到继续计时的作用
             chronometer.start();
             String regularEx = "#";
             String[] str = null;
@@ -252,7 +253,7 @@ if (obj1!=null&&Integer.parseInt(s)==1)
                    if (!str[row*9+col].equals(".")) edittexts[row][col].setText(str[row*9+col]);
                    else edittexts[row][col].setText("");
 
-                 suk.board[row][col]=str[row*9+col].charAt(0);
+                   suk.board[row][col]=str[row*9+col].charAt(0);
 
                 }
             }
@@ -261,11 +262,11 @@ if (obj1!=null&&Integer.parseInt(s)==1)
         }
 
         else
-{
-    ClearInformation();
-    SetNumsOfGrids();
-}
-        }
+      {
+        ClearInformation();
+        SetNumsOfGrids();
+      }
+      }
         else
             SetNumsOfGrids();
         TableLayout tablelayout2=(TableLayout) findViewById(R.id.tablelayout2);
@@ -298,6 +299,7 @@ if (obj1!=null&&Integer.parseInt(s)==1)
                               Intent intent = new Intent(MainActivity.this , Fail.class);
                               intent.putExtra("this_hard_level",hard_level.getText().toString());
                               intent.putExtra("this_record_time",chronometer.getText().toString());
+                              ClearInformation();
                               startActivity(intent);
                           }
                           boolean IsFull=true;
@@ -339,6 +341,7 @@ if (obj1!=null&&Integer.parseInt(s)==1)
                                   Intent intent = new Intent(MainActivity.this , Success.class);
                                   intent.putExtra("this_hard_level",hard_level.getText().toString());
                                   intent.putExtra("this_record_time",chronometer.getText().toString());
+                                  ClearInformation();
                                   startActivity(intent);
                               }
                       }
@@ -468,6 +471,7 @@ private void SetListeners()
                                                   Intent intent = new Intent(MainActivity.this , Success.class);
                                                   intent.putExtra("this_hard_level",hard_level.getText().toString());
                                                   intent.putExtra("this_record_time",chronometer.getText().toString());
+                                                  ClearInformation();
                                                   startActivity(intent);
                                           }
                                        }

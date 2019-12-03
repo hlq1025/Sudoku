@@ -28,6 +28,7 @@ public class Success extends AppCompatActivity {
     }
     private void init()
     {
+        getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
         back_to_homepage_btn=findViewById(R.id.back_to_homepage_btn);
         con_game_btn=findViewById(R.id.con_game_btn);
         this_hard_level=findViewById(R.id.this_hard_level);
@@ -85,7 +86,7 @@ public class Success extends AppCompatActivity {
                                              double difficulty_index;
                                              String hard_level=this_hard_level.getText().toString();
                                              if(hard_level.equals("简单"))
-                                                 difficulty_index=0.1;
+                                                 difficulty_index=0.3;
                                              else if(hard_level.equals("中等"))
                                                  difficulty_index=0.5;
                                              else
