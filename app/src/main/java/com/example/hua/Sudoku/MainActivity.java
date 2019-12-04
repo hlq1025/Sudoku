@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private long recordingTime = 0;
     private double difficulty_index;
     private Sudoku suk;
-    UnfinishGame ug;
+    private UnfinishGame ug;
     public static MainActivity instance = null;
 
     @Override
