@@ -1,23 +1,18 @@
 package com.example.hua.Sudoku;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.ComponentCallbacks;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,16 +23,13 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private RecordTable Rt;
-    private Button[][] edittexts;
+    private Button[][] grid_buttons;
     private Button[]  number_buttons;
     private Button clear_button;
     private Button pause_button;
     private Button hint_button;
     private Button menu_button;
-
     private Chronometer chronometer;
-    private Intent intent;
-    private TextView sudoku;
     private TextView time_record;
     private TextView hard_level;
     private int num;
@@ -52,77 +44,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setCustomDensity(this,getApplication());
+        Density.setCustomDensity(this,getApplication());
         setContentView(R.layout.activity_main);
         instance=this;
         init();
-
-
-
-    }
+        }
     @Override
-    protected void onDestroy()
-    {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return true;//消费掉后退键
+        }
+        return super.onKeyDown(keyCode, event); }
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         long base_time= SystemClock.elapsedRealtime() - chronometer.getBase();
-     String this_hard_level=hard_level.getText().toString();
-     String []nums=new String[81];
-     boolean full=true;
-     boolean flag=true;
-     for(int i=0;i<9;i++)
+        String this_hard_level=hard_level.getText().toString();
+        String []nums=new String[81];
+        boolean full=true;
+        boolean flag=true;
+        for(int i=0;i<9;i++)
          for(int j=0;j<9;j++)
          {
-            String temp=edittexts[i][j].getText().toString();
+            String temp=grid_buttons[i][j].getText().toString();
            if(temp.length()!=0)  nums[i*9+j]= temp;
            else nums[i*9+j]=".";
             if(temp.equals("")) full=false;
          }
-
-
-        flag= suk.CanGetSolution() &&(!full);
-     SaveInformation(base_time,this_hard_level,nums,flag);
-
-    }
-    private void init()
-    {
+         flag= suk.CanGetSolution() &&(!full);
+        SaveInformation(base_time,this_hard_level,nums,flag);
+        }
+    private void init() {
         getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
-        Rt=new RecordTable(this);
+        Rt=RecordTable.Get_Instance(this);
         suk=new Sudoku();
+
         SQLiteDatabase writableDatabase = Rt.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
 
-        values.put("hard_level","简单");
-        values.put("time","无");
-        writableDatabase.insert("record",null,values);
-        values.clear();
-
-        values.put("hard_level","中等");
-        values.put("time","无");
-        writableDatabase.insert("record",null,values);
-        values.clear();
-
-        values.put("hard_level","困难");
-        values.put("time","无");
-        writableDatabase.insert("record",null,values);
-        values.clear();
-
-/*
-        values.put("hard_level","简单");
-        values.put("time","??");
-        writableDatabase.update("record",values,"hard_level=?",new String[]{"简单"});
-        values.clear();
-
-        values.put("hard_level","中等");
-        values.put("time","??");
-        writableDatabase.update("record",values,"hard_level=?",new String[]{"中等"});
-        values.clear();
-
-        values.put("hard_level","困难");
-        values.put("time","??");
-        writableDatabase.update("record",values,"hard_level=?",new String[]{"困难"});
-        values.clear();
-*/
         Object obj=getIntent().getExtras().get("difficulty_index");
         difficulty_index= Double.parseDouble(obj.toString());
         time_record=findViewById(R.id.time_record);
@@ -152,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         last_pressed_col=-1;
         pressed_row=-1;
         pressed_col=-1;
-        edittexts=new Button[9][9];
+        grid_buttons=new Button[9][9];
 
         clear_button=findViewById(R.id.clear_button);
         pause_button=findViewById(R.id.pause_button);
@@ -166,16 +125,16 @@ public class MainActivity extends AppCompatActivity {
             TableRow tableRow=new TableRow(MainActivity.this);
             for(int col=0;col<9;col++)
             {
-                edittexts[row][col]=new Button(MainActivity.this);
-                //edittexts[row][col].setLayoutParams();
-                edittexts[row][col].setEnabled(true);
-                edittexts[row][col].setGravity(Gravity.CENTER);
-                edittexts[row][col].setTextSize(15);
-                edittexts[row][col].setTextColor(Color.rgb(28,159,93));
+                grid_buttons[row][col]=new Button(MainActivity.this);
+                //grid_buttons[row][col].setLayoutParams();
+                grid_buttons[row][col].setEnabled(true);
+                grid_buttons[row][col].setGravity(Gravity.CENTER);
+                grid_buttons[row][col].setTextSize(15);
+                grid_buttons[row][col].setTextColor(Color.rgb(28,159,93));
 
 
-                SetButtonStyle(edittexts,row,col);
-                final Button b=edittexts[row][col];
+                SetButtonStyle(grid_buttons,row,col);
+                final Button b=grid_buttons[row][col];
                 final int row_t=row;
                 final int col_t=col;
                 b.setOnClickListener(new View.OnClickListener() {
@@ -188,34 +147,34 @@ public class MainActivity extends AppCompatActivity {
                             //set button style for the last pressed button , the same column buttons ,the same row buttons and the same region buttons
                             for(int i=0;i<9;i++)
                             {
-                                SetButtonStyle(edittexts,i,last_pressed_col);
-                                SetButtonStyle(edittexts,last_pressed_row,i);
+                                SetButtonStyle(grid_buttons,i,last_pressed_col);
+                                SetButtonStyle(grid_buttons,last_pressed_row,i);
                             }
                             int last_left_pos=last_pressed_row/3*3;
                             int last_up_pos=last_pressed_col/3*3;
                             for(int i=last_left_pos;i<last_left_pos+3;i++)
                                 for(int j=last_up_pos;j<last_up_pos+3;j++)
-                                    SetButtonStyle(edittexts,i,j);
+                                    SetButtonStyle(grid_buttons,i,j);
 
-                            if(edittexts[last_pressed_row][last_pressed_col].getText().length()==0)
-                                edittexts[last_pressed_row][last_pressed_col].setEnabled(true);
+                            if(grid_buttons[last_pressed_row][last_pressed_col].getText().length()==0)
+                                grid_buttons[last_pressed_row][last_pressed_col].setEnabled(true);
                         }
 
                         //set button style for the pressed button , the same column buttons ,the same row buttons and the same region buttons
                         for(int i=0;i<9;i++)
                         {
-                            SetButtonStyle_Ref(edittexts,i,pressed_col);
-                            SetButtonStyle_Ref(edittexts,pressed_row,i);
+                            SetButtonStyle_Ref(grid_buttons,i,pressed_col);
+                            SetButtonStyle_Ref(grid_buttons,pressed_row,i);
                         }
                         int left_pos=pressed_row/3*3;
                         int up_pos=pressed_col/3*3;
                         for(int i=left_pos;i<left_pos+3;i++)
                             for(int j=up_pos;j<up_pos+3;j++)
-                                SetButtonStyle_Ref(edittexts,i,j);
+                                SetButtonStyle_Ref(grid_buttons,i,j);
 
-                        SetButtonStyle_Pressed(edittexts,pressed_row,pressed_col);
+                        SetButtonStyle_Pressed(grid_buttons,pressed_row,pressed_col);
 
-                        edittexts[pressed_row][pressed_col].setEnabled(false);
+                        grid_buttons[pressed_row][pressed_col].setEnabled(false);
 
                         last_pressed_row=pressed_row;
                         last_pressed_col=pressed_col;
@@ -228,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int height=width;
 
-             tableRow.addView(edittexts[row][col],new TableRow.LayoutParams(width,height));
+             tableRow.addView(grid_buttons[row][col],new TableRow.LayoutParams(width,height));
             }
          tablelayout.addView(tableRow,new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         }
@@ -250,8 +209,8 @@ public class MainActivity extends AppCompatActivity {
             {
                 for(int col=0;col<9;col++)
                 {
-                   if (!str[row*9+col].equals(".")) edittexts[row][col].setText(str[row*9+col]);
-                   else edittexts[row][col].setText("");
+                   if (!str[row*9+col].equals(".")) grid_buttons[row][col].setText(str[row*9+col]);
+                   else grid_buttons[row][col].setText("");
 
                    suk.board[row][col]=str[row*9+col].charAt(0);
 
@@ -293,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                       // 响应事件
                       num=Integer.parseInt(b1.getText().toString());
                       if(pressed_row!=-1&&pressed_col!=-1) {
-                          edittexts[pressed_row][pressed_col].setText(String.valueOf(num));
+                          grid_buttons[pressed_row][pressed_col].setText(String.valueOf(num));
                           suk.board[pressed_row][pressed_col] = (char) (48 + num);
                           if (!suk.CanGetSolution()) {
                               Intent intent = new Intent(MainActivity.this , Fail.class);
@@ -306,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                           for(int i=0;i<9;i++)
                               for(int j=0;j<9;j++)
                               {
-                                  if(edittexts[i][j].getText().length()==0)
+                                  if(grid_buttons[i][j].getText().length()==0)
                                       IsFull=false;
                               }
                               if(IsFull)
@@ -364,19 +323,19 @@ private void SetListeners()
                                         {
                                             if(pressed_row!=-1&&pressed_col!=-1)
                                             {
-                                                edittexts[pressed_row][pressed_col].setText("");
-                                                edittexts[pressed_row][pressed_col].setEnabled(true);
+                                                grid_buttons[pressed_row][pressed_col].setText("");
+                                                grid_buttons[pressed_row][pressed_col].setEnabled(true);
 
                                                 for(int i=0;i<9;i++)
                                                 {
-                                                    SetButtonStyle(edittexts,i,pressed_col);
-                                                    SetButtonStyle(edittexts,pressed_row,i);
+                                                    SetButtonStyle(grid_buttons,i,pressed_col);
+                                                    SetButtonStyle(grid_buttons,pressed_row,i);
                                                 }
                                                 int left_pos=pressed_row/3*3;
                                                 int up_pos=pressed_col/3*3;
                                                 for(int i=left_pos;i<left_pos+3;i++)
                                                     for(int j=up_pos;j<up_pos+3;j++)
-                                                        SetButtonStyle(edittexts,i,j);
+                                                        SetButtonStyle(grid_buttons,i,j);
 
                                             }
 
@@ -396,7 +355,7 @@ private void SetListeners()
                                                 for(int row=0;row<9;row++)
                                                     for(int col=0;col<9;col++)
                                                     {
-                                                        edittexts[row][col].setEnabled(false);
+                                                        grid_buttons[row][col].setEnabled(false);
                                                     }
                                                 for(int col=0;col<9;col++)
                                                     number_buttons[col].setEnabled(false);
@@ -410,9 +369,9 @@ private void SetListeners()
                                                 pause_button.setText("暂停");
                                                 for(int row=0;row<9;row++)
                                                     for(int col=0;col<9;col++)
-                                                    {   if(edittexts[row][col].getText().length()==0)
+                                                    {   if(grid_buttons[row][col].getText().length()==0)
 
-                                                        edittexts[row][col].setEnabled(true);
+                                                        grid_buttons[row][col].setEnabled(true);
                                                     }
                                                 for(int col=0;col<9;col++)
                                                     number_buttons[col].setEnabled(true);
@@ -429,14 +388,14 @@ private void SetListeners()
                                        {
                                           if(pressed_row!=-1&&pressed_col!=-1)
                                           {int ans=suk.GetHint(pressed_row,pressed_col);
-                                           edittexts[pressed_row][pressed_col].setText(String.valueOf(ans));
+                                           grid_buttons[pressed_row][pressed_col].setText(String.valueOf(ans));
                                            suk.board[pressed_row][pressed_col]=(char)(48+ans);
-                                           edittexts[pressed_row][pressed_col].setEnabled(false);
+                                           grid_buttons[pressed_row][pressed_col].setEnabled(false);
                                               boolean IsFull=true;
                                               for(int i=0;i<9;i++)
                                                   for(int j=0;j<9;j++)
                                                   {
-                                                      if(edittexts[i][j].getText().length()==0)
+                                                      if(grid_buttons[i][j].getText().length()==0)
                                                           IsFull=false;
                                                   }
                                               if(IsFull)
@@ -502,8 +461,8 @@ private void SetNumsOfGrids()
         {
             char c=suk.board[row][col];
             if(c>'0'&&c<='9') {
-                edittexts[row][col].setText( String.valueOf(c));
-                edittexts[row][col].setEnabled(false);
+                grid_buttons[row][col].setText( String.valueOf(c));
+                grid_buttons[row][col].setEnabled(false);
             }
 
         }
@@ -511,6 +470,7 @@ private void SetNumsOfGrids()
     }
 }
 
+//set  default button style
 private void SetButtonStyle(Button[][] buttons,int row,int col)
 {
     int count=row%3*10+col%3;
@@ -561,7 +521,7 @@ private void SetButtonStyle(Button[][] buttons,int row,int col)
 }
 
 
-
+//set the pressed button style
 private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
     {
         int count=row%3*10+col%3;
@@ -610,6 +570,7 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
             }
         }
     }
+    // set button style for the button which are in the same row or the same col or the same grid with the pressed button
     private void SetButtonStyle_Ref(Button[][] buttons,int row,int col)
     {
         int count=row%3*10+col%3;
@@ -659,61 +620,10 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
         }
     }
 
-    /**
-     * 今日头条适配方案  修改设备密度
-     * 支持以宽或者高一个维度去适配，保持该维度上和设计图一致
-     * 当前设备总宽度(px) / 设计图总宽度(dp) = density
-     * density: 1dp 占当前设备的多少像素
-     * 在BaseActivity的onCreate()中引用即可
-     * @param activity
-     * @param application
-     */
 
-    private static float sNoncompatDensity;
-    private static float sNoncompatScaledDensity;
 
-    public static void setCustomDensity(@NonNull Activity activity, @NonNull final Application application) {
 
-        final DisplayMetrics appDisplayMetrics = application.getResources().getDisplayMetrics();
-
-        if (sNoncompatDensity == 0) {
-            // 系统显示器的逻辑密度
-            sNoncompatDensity = appDisplayMetrics.density;
-            // 字体的缩放系数，与density相同
-            sNoncompatScaledDensity = appDisplayMetrics.scaledDensity;
-            // 监听字体切换，防止系统切换后不起作用
-            application.registerComponentCallbacks(new ComponentCallbacks() {
-                @Override
-                public void onConfigurationChanged(Configuration newConfig) {
-                    if (newConfig != null && newConfig.fontScale > 0) {
-                        sNoncompatScaledDensity = application.getResources().getDisplayMetrics().scaledDensity;
-                    }
-                }
-
-                @Override
-                public void onLowMemory() {
-
-                }
-            });
-        }
-
-        // 目标密度 屏幕宽度(px) / 设计图的宽度(dp), 这里是以小米6X为例
-        float targetDensity = appDisplayMetrics.heightPixels/711;
-        // 目标缩放密度
-        float targetScaleDensity = targetDensity * (sNoncompatScaledDensity / sNoncompatDensity);
-        // 目标DPI
-        int targetDensityDpi = (int) (160 * targetDensity);
-
-        appDisplayMetrics.density = targetDensity;
-        appDisplayMetrics.scaledDensity = targetScaleDensity;
-        appDisplayMetrics.densityDpi = targetDensityDpi;
-
-        final DisplayMetrics activityDisplayMetrics = activity.getResources().getDisplayMetrics();
-        activityDisplayMetrics.density = targetDensity;
-        activityDisplayMetrics.scaledDensity = targetScaleDensity;
-        activityDisplayMetrics.densityDpi = targetDensityDpi;
-    }
-    public void SaveInformation(long base_time, String hard_level, String[] numbers, boolean flag) {
+    private void SaveInformation(long base_time, String hard_level, String[] numbers, boolean flag) {
 
        SharedPreferences sharedPreferences = getSharedPreferences(hard_level, Context.MODE_PRIVATE);
         //步骤2： 实例化SharedPreferences.Editor对象
@@ -737,7 +647,7 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
         editor.commit();
     }
 
-    public String[] LoadInformation(String hard_level) {
+    private String[] LoadInformation(String hard_level) {
         String ans[] = new String[3];
 
 
@@ -758,12 +668,13 @@ private void SetButtonStyle_Pressed(Button[][] buttons,int row,int col)
         return ans;
 
     }
-public void ClearInformation()
-{
+private void ClearInformation() {
     SharedPreferences sharedPreferences = getSharedPreferences(hard_level.getText().toString(), Context.MODE_PRIVATE);
-    //步骤2： 实例化SharedPreferences.Editor对象
+
     SharedPreferences.Editor editor = sharedPreferences.edit();
-   editor.clear();
+
+    editor.clear();
+
     editor.commit();
 }
 }

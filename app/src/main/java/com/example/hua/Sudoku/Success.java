@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,11 +22,18 @@ public class Success extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Density.setCustomDensity(this,getApplication());
         setContentView(R.layout.success);
         init();
         SetListeners();
 
     }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return true;//消费掉后退键
+        }
+        return super.onKeyDown(keyCode, event); }
     private void init()
     {
         getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
@@ -36,7 +44,7 @@ public class Success extends AppCompatActivity {
         record_fastest_time=findViewById(R.id.record_fastest_time);
         this_hard_level.setText(getIntent().getExtras().get("this_hard_level").toString());
         this_record_time.setText(getIntent().getExtras().get("this_record_time").toString());
-        SQLiteDatabase writableDatabase = new RecordTable(this).getWritableDatabase();
+        SQLiteDatabase writableDatabase =  RecordTable.Get_Instance(this).getWritableDatabase();
         //修改
         ContentValues cv=new ContentValues();
 

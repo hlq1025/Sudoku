@@ -9,8 +9,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 public class HintDialog extends Dialog {
-    private Button confirmbtn;
-    private Button cancelbtn;
+
 
     public static  boolean load_last_game;
     //    style引用style样式

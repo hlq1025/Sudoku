@@ -1,10 +1,13 @@
 package com.example.hua.Sudoku;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 public class RecordTable extends SQLiteOpenHelper
 {
     public static final String TABLE_NAME;
+
+    public static  RecordTable RT;
 
     static {
         TABLE_NAME = "record";
@@ -16,10 +19,32 @@ public class RecordTable extends SQLiteOpenHelper
     public static final int VERSION = 1;
 
 
+   public static RecordTable Get_Instance(Context context)
+   {
+       if(RT==null) return new RecordTable(context);
+       else return RT;
+   }
 
-
-    public RecordTable(Context context) {
+    private RecordTable(Context context) {
         super(context, DATABASE_NAME, null, 2);
+        SQLiteDatabase writableDatabase = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("hard_level","简单");
+        values.put("time","无");
+        writableDatabase.insert("record",null,values);
+        values.clear();
+
+        values.put("hard_level","中等");
+        values.put("time","无");
+        writableDatabase.insert("record",null,values);
+        values.clear();
+
+        values.put("hard_level","困难");
+        values.put("time","无");
+        writableDatabase.insert("record",null,values);
+        values.clear();
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
