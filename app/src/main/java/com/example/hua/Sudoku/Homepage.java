@@ -16,7 +16,7 @@ public class Homepage extends AppCompatActivity {
     private double difficulty_index;
     private   Intent intent;
     private HintDialog hint;
-    UnfinishGame ug;
+    private UnfinishGame ug;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
