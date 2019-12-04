@@ -1,6 +1,6 @@
 # 1.Introduction
 Sudoku game  
-this is a android app of sudoku game.  
+This is a android app of sudoku game.  
 It has three hard levels:easy,midium and hard.   
 The rule is that you must make the nums in the same row or the same col or the same grid different.
 # 2.Support Function
