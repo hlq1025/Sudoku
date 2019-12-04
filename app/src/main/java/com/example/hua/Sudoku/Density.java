@@ -27,21 +27,8 @@ public class Density {
             // 系统显示器的逻辑密度
             sNoncompatDensity = appDisplayMetrics.density;
             // 字体的缩放系数，与density相同
-            sNoncompatScaledDensity = appDisplayMetrics.scaledDensity;
-            // 监听字体切换，防止系统切换后不起作用
-           /* application.registerComponentCallbacks(new ComponentCallbacks() {
-                @Override
-                public void onConfigurationChanged(Configuration newConfig) {
-                    if (newConfig != null && newConfig.fontScale > 0) {
-                        sNoncompatScaledDensity = application.getResources().getDisplayMetrics().scaledDensity;
-                    }
-                }
+            sNoncompatScaledDensity = appDisplayMetrics.density;
 
-                @Override
-                public void onLowMemory() {
-
-                }
-            });*/
         }
 
         // 目标密度 屏幕宽度(px) / 设计图的宽度(dp).
