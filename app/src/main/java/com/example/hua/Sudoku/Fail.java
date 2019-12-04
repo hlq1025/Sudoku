@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Fail extends AppCompatActivity {
 
@@ -31,7 +32,8 @@ public class Fail extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                        return true;//消费掉后退键
+                    Toast.makeText(this, "返回键已被屏蔽", Toast.LENGTH_SHORT).show();
+                    return true;
                 }
               return super.onKeyDown(keyCode, event); }
 

@@ -2,12 +2,12 @@ package com.example.hua.Sudoku;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class Homepage extends AppCompatActivity {
     private Button easy_mode;
@@ -16,6 +16,7 @@ public class Homepage extends AppCompatActivity {
     private double difficulty_index;
     private   Intent intent;
     private HintDialog hint;
+    UnfinishGame ug;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +28,8 @@ public class Homepage extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            return true;//消费掉后退键
+            Toast.makeText(this, "返回键已被屏蔽", Toast.LENGTH_SHORT).show();
+            return true;
         }
         return super.onKeyDown(keyCode, event); }
     private void init()
@@ -37,6 +39,7 @@ public class Homepage extends AppCompatActivity {
        hard_mode=findViewById(R.id.hard_mode);
        intent = new Intent(Homepage.this , MainActivity.class);
        hint = new HintDialog(this, 0, 0,  R.style.DialogTheme);
+       ug=new UnfinishGame(this);
        getWindow().setNavigationBarColor(getResources().getColor(R.color.navigationBarColor));
     }
 
@@ -52,7 +55,7 @@ public class Homepage extends AppCompatActivity {
                                      intent.putExtra("difficulty_index",difficulty_index);
                                      intent.putExtra("hard_level","简单");
 
-                                     String[]ans=LoadInformation("简单");
+                                     String[]ans=ug.LoadInformation("简单");
 
                                      if(ans[0].equals("true"))
                                      {
@@ -80,7 +83,7 @@ public class Homepage extends AppCompatActivity {
                                              difficulty_index=0.5;
                                              intent.putExtra("difficulty_index",difficulty_index);
                                              intent.putExtra("hard_level","中等");
-                                             String[]ans=LoadInformation("中等");
+                                             String[]ans=ug.LoadInformation("中等");
 
                                              if(ans[0].equals("true"))
                                              {
@@ -107,7 +110,7 @@ public class Homepage extends AppCompatActivity {
                                              difficulty_index=0.7;
                                              intent.putExtra("difficulty_index",difficulty_index);
                                              intent.putExtra("hard_level","困难");
-                                             String[]ans=LoadInformation("困难");
+                                             String[]ans=ug.LoadInformation("困难");
 
                                              if(ans[0].equals("true"))
                                              {
@@ -139,27 +142,6 @@ public class Homepage extends AppCompatActivity {
 
         hint.setCancelable(true);
         hint.show();
-
-    }
-    public String[] LoadInformation(String hard_level) {
-        String ans[] = new String[3];
-
-
-        SharedPreferences sharedPreferences =  getSharedPreferences(hard_level, 0);
-
-        boolean CanCon = sharedPreferences.getBoolean("可继续", false);
-
-        if (CanCon) ans[0] = "true";
-
-        else ans[0] = "false";
-
-        ans[1] =String.valueOf(sharedPreferences.getLong("用时", 0));
-
-
-
-        ans[2] = sharedPreferences.getString("数字表", "");
-
-        return ans;
 
     }
 
