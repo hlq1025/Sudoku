@@ -75,38 +75,24 @@ public class Menu extends AppCompatActivity {
       });
 
         SQLiteDatabase sqLiteDatabase =  RecordTable.Get_Instance(this).getWritableDatabase();
-
-        //搜索全表字段，null代表搜索条件
-        Cursor cursor = sqLiteDatabase.query("record", null, null, null, null, null, null);
-
-        //查询到的结果条数c.getCount();
-        //遍历结果
-        while (cursor.moveToNext()) {
-            String s2 = cursor.getString(cursor.getColumnIndex("hard_level"));
-
-            if(s2.equals("简单"))
-            {easy_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
-
-            }
-            else if(s2.equals("中等"))
-            {
-                middle_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
-
-            }
-            else
-            {
-                hard_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
-
-            }
-
+        Cursor cursor = sqLiteDatabase.query("record", null, "hard_level=?", new String[]{"简单"}, null, null, null);
+        if(cursor.moveToNext())
+        {
+            easy_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
+        }
+        cursor=sqLiteDatabase.query("record", null, "hard_level=?", new String[]{"中等"}, null, null, null);
+        if(cursor.moveToNext())
+        {
+            middle_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
+        }
+        cursor=sqLiteDatabase.query("record", null, "hard_level=?", new String[]{"困难"}, null, null, null);
+        if(cursor.moveToNext())
+        {
+            hard_time_record.setText(cursor.getString(cursor.getColumnIndex("time")));
+        }
+        cursor.close();
+        sqLiteDatabase.close();
 
         }
-
-        //关闭连接
-        sqLiteDatabase.close();
-        cursor.close();
-
-    }
-
 }
 
